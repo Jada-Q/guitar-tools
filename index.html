@@ -265,18 +265,60 @@
     </div>
   </div>
 
-  <!-- ===== 看谱（TAB 六线谱）===== -->
+  <!-- ===== 看谱 ===== -->
   <div class="panel" id="tabp">
     <div class="card">
-      <div class="rule">
-        吉他不用五线谱，用 <span class="k">TAB（六线谱）</span>，超好懂：<br>
-        ① <span class="k">6 条横线 = 6 根弦</span>。最上面那条 = 最细的 1 弦(e)，最下面 = 最粗的 6 弦(E)。<br>
-        ② 线上的<span class="k">数字 = 按第几品</span>。<span class="k">0 = 空弦</span>（不按，直接弹）。<br>
-        ③ 从<span class="k">左往右</span>弹。数字<span class="k">竖着叠在一起 = 同时弹</span>（和弦）；<span class="k">横着排开 = 一个个弹</span>（旋律）。
+      <div class="subtab">
+        <button class="active" data-s="tTab">六线谱</button>
+        <button data-s="tChord">和弦谱</button>
+        <button data-s="tStrum">扫弦记号</button>
       </div>
-      <svg id="tabSvg" width="520" height="180" viewBox="0 0 520 180" xmlns="http://www.w3.org/2000/svg"></svg>
-      <button class="act replay" id="tabPlay">▶︎ 播放这段（一闪一闪亮晶晶）</button>
-      <div class="note">最后一列 5 个数字叠在一起 = 一个 C 和弦（同时弹 5 根弦）。前面单个数字 = 旋律，一个一个弹。</div>
+
+      <!-- 六线谱 TAB -->
+      <div class="subpanel active" id="tTab">
+        <div class="rule">
+          吉他不用五线谱，用 <span class="k">TAB（六线谱）</span>，超好懂：<br>
+          ① <span class="k">6 条横线 = 6 根弦</span>。最上面 = 最细的 1 弦(e)，最下面 = 最粗的 6 弦(E)。<br>
+          ② 线上的<span class="k">数字 = 按第几品</span>。<span class="k">0 = 空弦</span>（不按直接弹）。<br>
+          ③ 从<span class="k">左往右</span>弹。数字<span class="k">竖着叠 = 同时弹</span>（和弦）；<span class="k">横着排 = 一个个弹</span>（旋律）。
+        </div>
+        <svg id="tabSvg" width="520" height="180" viewBox="0 0 520 180" xmlns="http://www.w3.org/2000/svg"></svg>
+        <button class="act replay" id="tabPlay">▶︎ 播放这段（一闪一闪亮晶晶）</button>
+        <div class="note">最后一列 5 个数字叠在一起 = 一个 C 和弦（同时弹 5 根弦）。前面单个数字 = 旋律。</div>
+      </div>
+
+      <!-- 和弦谱（弹唱最常用）-->
+      <div class="subpanel" id="tChord">
+        <div class="rule">
+          <span class="k">弹唱</span>最常见的是「<span class="k">和弦谱</span>」：歌词上方标字母，<span class="k">唱到那个字时，就换成那个和弦</span>。不告诉你具体怎么拨——你用学过的扫弦扫就行。
+        </div>
+        <div class="termcard" style="font-family:monospace;line-height:2.2;font-size:15px">
+          <span style="color:var(--cyan);font-weight:700">　C　　　　　G</span><br>
+          啦　啦　啦　啦　啦<br>
+          <span style="color:var(--cyan);font-weight:700">　Am　　　　F</span><br>
+          啦　啦　啦　啦　啦
+        </div>
+        <div class="note">↑ 这是<b>格式示意</b>（不是真曲谱）。读法：唱第一个"啦"时按 C 扫，唱到 G 上方那个字时换成 G。网上弹唱谱几乎都长这样——你现在能看懂了。</div>
+      </div>
+
+      <!-- 扫弦记号 -->
+      <div class="subpanel" id="tStrum">
+        <div class="rule">
+          右手怎么扫，用箭头表示：<br>
+          <span class="k">↓ = 向下扫</span>（从粗弦往细弦，最常用）　<span class="k">↑ = 向上扫</span>（从细弦往回带）。
+        </div>
+        <div class="termcard">
+          <h3>最简单（先练这个）</h3>
+          <div style="font-size:30px;letter-spacing:14px;color:var(--cyan);text-align:center;margin:6px 0">↓ ↓ ↓ ↓</div>
+          <p style="text-align:center">每拍一下，全往下扫。配节拍器 60 BPM。</p>
+        </div>
+        <div class="termcard">
+          <h3>最常用的万能型(熟了再上)</h3>
+          <div style="font-size:30px;letter-spacing:10px;color:var(--gold);text-align:center;margin:6px 0">↓ ↓ ↑ ↑ ↓ ↑</div>
+          <p style="text-align:center">念口诀："下、下上、上下上"。几乎能配任何欢快流行歌。</p>
+        </div>
+        <div class="note">扫弦练的是右手节奏，和左手按和弦分开练，再合起来。配「节拍」tab 一起用。</div>
+      </div>
     </div>
   </div>
 
@@ -555,10 +597,11 @@ document.getElementById('metroBtn').addEventListener('click',function(){
 // ============ ④ 名称：子 tab 切换 ============
 document.querySelectorAll('.subtab button').forEach(b=>{
   b.addEventListener('click',()=>{
-    document.querySelectorAll('.subtab button').forEach(x=>x.classList.remove('active'));
-    document.querySelectorAll('.subpanel').forEach(x=>x.classList.remove('active'));
+    const panel=b.closest('.panel');
+    panel.querySelectorAll('.subtab button').forEach(x=>x.classList.remove('active'));
+    panel.querySelectorAll('.subpanel').forEach(x=>x.classList.remove('active'));
     b.classList.add('active');
-    document.getElementById(b.dataset.s).classList.add('active');
+    panel.querySelector('#'+b.dataset.s).classList.add('active');
   });
 });
 
