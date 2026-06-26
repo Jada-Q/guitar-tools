@@ -15,8 +15,9 @@
   .tagline{ text-align:center; color:var(--dim); font-size:13px; margin-bottom:22px; }
 
   .tabs{ display:flex; gap:8px; margin-bottom:22px; }
-  .tab{ flex:1; text-align:center; cursor:pointer; font-weight:700; font-size:15px; padding:12px 8px;
-        border-radius:12px; border:1px solid var(--stroke); background:#161b29; color:var(--dim); transition:.15s; }
+  .tabs{ gap:6px; }
+  .tab{ flex:1; text-align:center; cursor:pointer; font-weight:700; font-size:14px; padding:11px 4px;
+        border-radius:11px; border:1px solid var(--stroke); background:#161b29; color:var(--dim); transition:.15s; }
   .tab.active{ background:linear-gradient(90deg,var(--cyan),#4f9dff); color:#04121f; border-color:transparent; }
 
   .panel{ display:none; }
@@ -69,6 +70,29 @@
   select{ font:inherit; background:#161b29; color:var(--ink); border:1px solid var(--stroke); border-radius:8px; padding:8px 10px; }
   .center{ text-align:center; }
   .note{ color:var(--dim); font-size:12px; text-align:center; margin-top:16px; line-height:1.6; }
+
+  /* ---- 名称（部位 + 术语）---- */
+  .subtab{ display:flex; gap:8px; margin-bottom:16px; }
+  .subtab button{ flex:1; font:inherit; font-weight:700; font-size:14px; cursor:pointer; padding:9px 0; border-radius:10px;
+        border:1px solid var(--stroke); background:#161b29; color:var(--dim); }
+  .subtab button.active{ background:#22304a; color:var(--cyan); border-color:var(--cyan); }
+  .subpanel{ display:none; } .subpanel.active{ display:block; }
+  #partsSvg{ display:block; margin:0 auto 10px; }
+  .legend{ display:grid; grid-template-columns:1fr; gap:8px; }
+  .legend .it{ display:flex; gap:10px; align-items:flex-start; font-size:14px; line-height:1.5; }
+  .legend .num{ flex:0 0 22px; height:22px; border-radius:50%; background:var(--cyan); color:#04121f;
+        font-weight:800; font-size:12px; display:flex; align-items:center; justify-content:center; margin-top:1px; }
+  .legend b{ color:var(--ink); } .legend span{ color:var(--dim); }
+  .termcard{ background:#161b29; border:1px solid var(--stroke); border-radius:12px; padding:14px 16px; margin-bottom:12px; }
+  .termcard h3{ font-size:15px; color:var(--cyan); margin-bottom:8px; }
+  .termcard p{ font-size:14px; color:#c4ccdb; line-height:1.7; margin:4px 0; }
+  .termcard .k{ color:var(--gold); font-weight:700; }
+
+  /* ---- 看谱 TAB ---- */
+  .rule{ font-size:14px; color:#c4ccdb; line-height:1.8; }
+  .rule .k{ color:var(--cyan); font-weight:700; }
+  #tabSvg{ display:block; margin:16px auto 0; max-width:100%; }
+  .tabcol-hl{ fill:var(--gold); }
 </style>
 </head>
 <body>
@@ -77,9 +101,11 @@
   <div class="tagline">调音器 · 和弦图 · 节拍器 — 声音全程序生成，零音频文件</div>
 
   <div class="tabs">
-    <div class="tab active" data-p="tune">调音器</div>
+    <div class="tab active" data-p="tune">调音</div>
     <div class="tab" data-p="chord">和弦</div>
-    <div class="tab" data-p="metro">节拍器</div>
+    <div class="tab" data-p="metro">节拍</div>
+    <div class="tab" data-p="parts">名称</div>
+    <div class="tab" data-p="tabp">看谱</div>
   </div>
 
   <!-- ===== 调音器 ===== -->
@@ -125,6 +151,108 @@
       </div>
       <div class="center"><button class="act" id="metroBtn">▶︎ 开始</button></div>
       <div class="note">第一拍是重音（金色 + 高音），帮你找小节的"头"。初学先用 60-80 BPM 慢练换和弦。</div>
+    </div>
+  </div>
+
+  <!-- ===== 名称（部位 + 术语）===== -->
+  <div class="panel" id="parts">
+    <div class="card">
+      <div class="subtab">
+        <button class="active" data-s="partA">吉他部位</button>
+        <button data-s="partB">音名 / 弦名 / 和弦名</button>
+      </div>
+
+      <div class="subpanel active" id="partA">
+        <svg id="partsSvg" width="280" height="500" viewBox="0 0 280 500" xmlns="http://www.w3.org/2000/svg">
+          <!-- 琴头 -->
+          <path d="M110 16 L170 16 L166 70 L114 70 Z" fill="#2a2018" stroke="#6b5640" stroke-width="2"/>
+          <!-- 弦钮 -->
+          <circle cx="104" cy="28" r="5" fill="#c9a04a"/><circle cx="104" cy="44" r="5" fill="#c9a04a"/><circle cx="104" cy="60" r="5" fill="#c9a04a"/>
+          <circle cx="176" cy="28" r="5" fill="#c9a04a"/><circle cx="176" cy="44" r="5" fill="#c9a04a"/><circle cx="176" cy="60" r="5" fill="#c9a04a"/>
+          <!-- 上弦枕 -->
+          <rect x="112" y="70" width="56" height="6" fill="#e8edf7"/>
+          <!-- 琴颈 / 指板 -->
+          <rect x="116" y="76" width="48" height="190" fill="#1c1410" stroke="#3a2c20" stroke-width="2"/>
+          <!-- 品丝 -->
+          <line x1="116" y1="112" x2="164" y2="112" stroke="#8a93a6" stroke-width="2"/>
+          <line x1="116" y1="150" x2="164" y2="150" stroke="#8a93a6" stroke-width="2"/>
+          <line x1="116" y1="190" x2="164" y2="190" stroke="#8a93a6" stroke-width="2"/>
+          <line x1="116" y1="230" x2="164" y2="230" stroke="#8a93a6" stroke-width="2"/>
+          <!-- 6 根弦 -->
+          <g stroke="#aab2c4">
+            <line x1="122" y1="76" x2="122" y2="266" stroke-width="0.8"/><line x1="130" y1="76" x2="130" y2="266" stroke-width="1"/>
+            <line x1="138" y1="76" x2="138" y2="266" stroke-width="1.2"/><line x1="142" y1="76" x2="142" y2="266" stroke-width="1.4"/>
+            <line x1="150" y1="76" x2="150" y2="266" stroke-width="1.7"/><line x1="158" y1="76" x2="158" y2="266" stroke-width="2"/>
+          </g>
+          <!-- 琴体 -->
+          <path d="M140 266 C 60 270, 52 330, 70 372 C 86 410, 60 430, 64 456 C 70 492, 210 492, 216 456 C 220 430, 194 410, 210 372 C 228 330, 220 270, 140 266 Z"
+                fill="#3a2a1c" stroke="#6b5640" stroke-width="2.5"/>
+          <!-- 音孔 -->
+          <circle cx="140" cy="372" r="30" fill="#0b0d14" stroke="#6b5640" stroke-width="2"/>
+          <!-- 琴桥 -->
+          <rect x="112" y="424" width="56" height="14" rx="3" fill="#2a2018" stroke="#6b5640" stroke-width="1.5"/>
+
+          <!-- 编号徽标 -->
+          <g font-family="sans-serif" font-size="13" font-weight="800">
+            <circle cx="140" cy="40" r="11" fill="#34e2ff"/><text x="140" y="45" fill="#04121f" text-anchor="middle">1</text>
+            <circle cx="196" cy="44" r="11" fill="#34e2ff"/><text x="196" y="49" fill="#04121f" text-anchor="middle">2</text>
+            <circle cx="92"  cy="73" r="11" fill="#34e2ff"/><text x="92"  y="78" fill="#04121f" text-anchor="middle">3</text>
+            <circle cx="190" cy="112" r="11" fill="#34e2ff"/><text x="190" y="117" fill="#04121f" text-anchor="middle">4</text>
+            <circle cx="190" cy="170" r="11" fill="#34e2ff"/><text x="190" y="175" fill="#04121f" text-anchor="middle">5</text>
+            <circle cx="92"  cy="170" r="11" fill="#34e2ff"/><text x="92"  y="175" fill="#04121f" text-anchor="middle">6</text>
+            <circle cx="232" cy="320" r="11" fill="#34e2ff"/><text x="232" y="325" fill="#04121f" text-anchor="middle">7</text>
+            <circle cx="140" cy="372" r="11" fill="#34e2ff"/><text x="140" y="377" fill="#04121f" text-anchor="middle">8</text>
+            <circle cx="196" cy="431" r="11" fill="#34e2ff"/><text x="196" y="436" fill="#04121f" text-anchor="middle">9</text>
+          </g>
+        </svg>
+        <div class="legend">
+          <div class="it"><div class="num">1</div><div><b>琴头 Headstock</b> <span>— 最顶端，装弦钮的地方。</span></div></div>
+          <div class="it"><div class="num">2</div><div><b>弦钮 Tuning peg</b> <span>— 拧它给弦调松紧（=调音）。调音器就是帮你看拧到哪准。</span></div></div>
+          <div class="it"><div class="num">3</div><div><b>上弦枕 Nut</b> <span>— 琴头和琴颈交界的白条，弦从这里开始算"空弦"。</span></div></div>
+          <div class="it"><div class="num">4</div><div><b>品丝 Fret</b> <span>— 指板上的金属横条。手指按在两条品丝之间。</span></div></div>
+          <div class="it"><div class="num">5</div><div><b>品（格）</b> <span>— 两条品丝之间的格子。从上弦枕往下数：第1品、第2品…按得越靠下音越高。</span></div></div>
+          <div class="it"><div class="num">6</div><div><b>指板 Fretboard</b> <span>— 琴颈正面、按弦的那块深色木板。</span></div></div>
+          <div class="it"><div class="num">7</div><div><b>琴颈 Neck</b> <span>— 左手握的长条部分。</span></div></div>
+          <div class="it"><div class="num">8</div><div><b>音孔 Sound hole</b> <span>— 声音从这里共鸣放大（民谣木吉他）。</span></div></div>
+          <div class="it"><div class="num">9</div><div><b>琴桥 Bridge</b> <span>— 弦在琴体这端的固定点。</span></div></div>
+        </div>
+      </div>
+
+      <div class="subpanel" id="partB">
+        <div class="termcard">
+          <h3>6 根弦的名字</h3>
+          <p>从<span class="k">最粗（最低音）</span>到<span class="k">最细（最高音）</span>，6 根弦的音名是：</p>
+          <p style="font-size:18px"><b>6弦 E</b> · 5弦 A · 4弦 D · 3弦 G · 2弦 B · <b>1弦 e</b></p>
+          <p>记忆口诀（中文谐音）：<span class="k">"饿啊得歌， 不饿"</span> 或英文 <span class="k">Eddie Ate Dynamite, Good Bye Eddie</span>。最靠近你脸/天花板的粗弦是 6 弦。</p>
+        </div>
+        <div class="termcard">
+          <h3>音名 = do re mi</h3>
+          <p><span class="k">C D E F G A B</span> 就是简谱的 <span class="k">1 2 3 4 5 6 7</span>（do re mi fa sol la si）。</p>
+          <p>每往下按一品（一格），音升高<span class="k">半音</span>；按两品升一个<span class="k">全音</span>。</p>
+        </div>
+        <div class="termcard">
+          <h3>和弦名怎么读</h3>
+          <p><span class="k">大写字母</span> = 这个和弦的根音（主音）。如 <b>C</b> = 以 C 为根的大调和弦，听着<span class="k">明亮、开心</span>。</p>
+          <p>字母后加 <span class="k">m</span>（minor 小调）= 听着<span class="k">忧伤、柔</span>。如 <b>Am</b> = A 小调和弦。</p>
+          <p>加 <span class="k">7</span> = 七和弦，听着<span class="k">带点悬念/布鲁斯味</span>。如 <b>G7</b>。</p>
+          <p>所以 <b>Am</b> 念"A 小"、<b>G7</b> 念"G 七"。回"和弦" tab 点一下就能听到区别。</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== 看谱（TAB 六线谱）===== -->
+  <div class="panel" id="tabp">
+    <div class="card">
+      <div class="rule">
+        吉他不用五线谱，用 <span class="k">TAB（六线谱）</span>，超好懂：<br>
+        ① <span class="k">6 条横线 = 6 根弦</span>。最上面那条 = 最细的 1 弦(e)，最下面 = 最粗的 6 弦(E)。<br>
+        ② 线上的<span class="k">数字 = 按第几品</span>。<span class="k">0 = 空弦</span>（不按，直接弹）。<br>
+        ③ 从<span class="k">左往右</span>弹。数字<span class="k">竖着叠在一起 = 同时弹</span>（和弦）；<span class="k">横着排开 = 一个个弹</span>（旋律）。
+      </div>
+      <svg id="tabSvg" width="520" height="180" viewBox="0 0 520 180" xmlns="http://www.w3.org/2000/svg"></svg>
+      <button class="act replay" id="tabPlay">▶︎ 播放这段（一闪一闪亮晶晶）</button>
+      <div class="note">最后一列 5 个数字叠在一起 = 一个 C 和弦（同时弹 5 根弦）。前面单个数字 = 旋律，一个一个弹。</div>
     </div>
   </div>
 </div>
@@ -351,6 +479,54 @@ document.getElementById('metroBtn').addEventListener('click',function(){
   if(running){ running=false; clearTimeout(timer); this.textContent='▶︎ 开始';
     document.querySelectorAll('.beatdots .d').forEach(d=>d.classList.remove('on')); return; }
   const a=audio(); running=true; beatIdx=0; nextTime=a.currentTime+0.05; this.textContent='⏸ 停止'; scheduler();
+});
+
+// ============ ④ 名称：子 tab 切换 ============
+document.querySelectorAll('.subtab button').forEach(b=>{
+  b.addEventListener('click',()=>{
+    document.querySelectorAll('.subtab button').forEach(x=>x.classList.remove('active'));
+    document.querySelectorAll('.subpanel').forEach(x=>x.classList.remove('active'));
+    b.classList.add('active');
+    document.getElementById(b.dataset.s).classList.add('active');
+  });
+});
+
+// ============ ⑤ 看谱：TAB 渲染 + 播放 ============
+const TAB_STR={1:329.63,2:246.94,3:196.00,4:146.83,5:110.00,6:82.41}; // 1弦e … 6弦E
+// 一闪一闪亮晶晶（旋律）+ 收尾一个 C 和弦。元素 = [弦号, 品]
+const TAB_COLS=[ [[2,1]],[[2,1]],[[1,3]],[[1,3]],[[1,5]],[[1,5]],[[1,3]], [[1,0],[2,1],[3,0],[4,2],[5,3]] ];
+function renderTab(){
+  const svg=document.getElementById('tabSvg'); if(!svg) return;
+  const ys=[30,52,74,96,118,140], lbl=['e','B','G','D','A','E'], x0=84, step=52;
+  let s=`<text x="40" y="18" fill="#34e2ff" font-size="12" font-family="sans-serif" text-anchor="middle">TAB</text>`;
+  for(let i=0;i<6;i++){
+    s+=`<line x1="60" y1="${ys[i]}" x2="500" y2="${ys[i]}" stroke="#4a5168" stroke-width="1.5"/>`;
+    s+=`<text x="40" y="${ys[i]+4}" fill="#8a93a6" font-size="13" font-family="monospace" text-anchor="middle">${lbl[i]}</text>`;
+  }
+  TAB_COLS.forEach((col,ci)=>{
+    const x=x0+ci*step; s+=`<g id="tabcol${ci}">`;
+    col.forEach(([str,fret])=>{ const y=ys[str-1];
+      s+=`<rect x="${x-10}" y="${y-10}" width="20" height="20" rx="3" fill="#0b0d14"/>`;
+      s+=`<text x="${x}" y="${y+5}" fill="#e8edf7" font-size="14" font-weight="700" font-family="monospace" text-anchor="middle" class="tn">${fret}</text>`;
+    });
+    s+=`</g>`;
+  });
+  svg.innerHTML=s;
+}
+renderTab();
+
+let tabPlaying=false;
+document.getElementById('tabPlay').addEventListener('click',()=>{
+  if(tabPlaying) return; tabPlaying=true; audio();
+  let i=0; const stepMs=520;
+  (function next(){
+    document.querySelectorAll('#tabSvg .tn').forEach(t=>t.setAttribute('fill','#e8edf7'));
+    if(i>=TAB_COLS.length){ tabPlaying=false; return; }
+    let t=ctx.currentTime+0.01;
+    TAB_COLS[i].forEach(([str,fret])=>{ ksPluck(TAB_STR[str]*Math.pow(2,fret/12),1.4,t,0.5); if(TAB_COLS[i].length>1) t+=0.025; });
+    const g=document.getElementById('tabcol'+i); if(g) g.querySelectorAll('.tn').forEach(x=>x.setAttribute('fill','#ffd95e'));
+    i++; setTimeout(next, stepMs);
+  })();
 });
 </script>
 </body>
