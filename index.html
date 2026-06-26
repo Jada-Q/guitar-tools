@@ -4,6 +4,12 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1" />
 <title>吉他三件套 · Guitar Kit</title>
+<link rel="manifest" href="manifest.json" />
+<meta name="theme-color" content="#0b0d14" />
+<link rel="apple-touch-icon" href="icon-192.png" />
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+<meta name="apple-mobile-web-app-title" content="吉他工具" />
 <style>
   :root{ --bg:#0b0d14; --card:#141823; --stroke:#232838; --ink:#e8edf7; --dim:#8a93a6;
          --cyan:#34e2ff; --pink:#ff4f8b; --green:#5effa0; --gold:#ffd95e; --red:#ff6b6b; }
@@ -731,6 +737,11 @@ document.getElementById('paBtn').addEventListener('click',function(){
   audio(); paRun=true; paIdx=0; paBeat=0; this.textContent='⏸ 停止'; paStep();
 });
 paShow();
+
+// ============ PWA：注册 service worker（离线 + 可装到主屏）============
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => navigator.serviceWorker.register('sw.js').catch(()=>{}));
+}
 </script>
 </body>
 </html>
