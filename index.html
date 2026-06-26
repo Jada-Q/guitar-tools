@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1" />
 <title>吉他三件套 · Guitar Kit</title>
 <link rel="manifest" href="manifest.json" />
+<link rel="icon" type="image/png" href="icon-192.png" />
 <meta name="theme-color" content="#0b0d14" />
 <link rel="apple-touch-icon" href="icon-192.png" />
 <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -158,7 +159,7 @@
       <div id="chordName">C</div>
       <svg id="chordSvg" width="240" height="260"></svg>
       <button class="act replay" id="chordReplay">🔊 再弹一次</button>
-      <div class="note">点和弦名 → 看指法图 + 听标准音。<br>● = 按这里（数字是建议用第几根手指）· ○ = 空弦弹 · ✕ = 不弹这根弦</div>
+      <div class="note">📐 <b>怎么看方向</b>：把吉他<b>竖起来、正面对着你</b>看——图最上面 = 琴头那端，从上往下数第 1 品、第 2 品；<b>左边是最粗的 6 弦，右边是最细的 1 弦</b>。<br>● = 按这里（数字 = 建议用第几根手指）· ○ = 空弦弹（不按）· ✕ = 这根弦不弹</div>
     </div>
   </div>
 
@@ -512,18 +513,21 @@ function strum(name){
 }
 
 function drawChord(name){
-  const c=CHORDS[name]; const W=240,H=260,PADX=30,PADY=46,GW=170,GH=160;
-  const cols=5, sx=GW/(cols-1==0?1:5-1); // 6 strings -> 5 gaps
+  const c=CHORDS[name]; const W=240,H=256,PADX=30,PADY=46,GW=170,GH=160;
   const stepX=GW/5, stepY=GH/4;
   let s=`<svg viewBox="0 0 ${W} ${H}" width="${W}" height="${H}" xmlns="http://www.w3.org/2000/svg">`;
+  // 顶部 = 琴头方向（把吉他竖起来对着你看）
+  s+=`<text x="${W/2}" y="14" fill="#5effa0" font-size="11" text-anchor="middle" font-family="sans-serif">↑ 琴头（上弦枕）</text>`;
   // 弦名标注 + X/O
   const sn=['E','A','D','G','B','e'];
   c.frets.forEach((f,i)=>{
     const x=PADX+i*stepX;
     let mark = f==='x'?'✕':(f===0?'○':'');
     s+=`<text x="${x}" y="${PADY-16}" fill="${f==='x'?'#ff6b6b':'#8a93a6'}" font-size="15" text-anchor="middle" font-family="sans-serif">${mark}</text>`;
-    s+=`<text x="${x}" y="${H-10}" fill="#8a93a6" font-size="12" text-anchor="middle" font-family="sans-serif">${sn[i]}</text>`;
+    s+=`<text x="${x}" y="224" fill="#8a93a6" font-size="12" text-anchor="middle" font-family="sans-serif">${sn[i]}</text>`;
   });
+  // 底部 = 左粗右细
+  s+=`<text x="${W/2}" y="244" fill="#34e2ff" font-size="11" text-anchor="middle" font-family="sans-serif">左 = 粗(6弦)　右 = 细(1弦)</text>`;
   // nut（粗顶线）
   s+=`<rect x="${PADX}" y="${PADY-3}" width="${GW}" height="5" fill="#e8edf7" rx="2"/>`;
   // 品丝

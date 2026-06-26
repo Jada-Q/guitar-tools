@@ -1,0 +1,202 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1" />
+<title>🎸 小小吉他手</title>
+<link rel="manifest" href="manifest.json" />
+<link rel="icon" type="image/png" href="icon-192.png" />
+<meta name="theme-color" content="#1b1040" />
+<link rel="apple-touch-icon" href="icon-192.png" />
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-title" content="小小吉他手" />
+<style>
+  :root{ --bg:#160d2e; --card:#241846; --stroke:#3a2c6b; --ink:#fff; --dim:#b8a9e0;
+         --cyan:#3fe0ff; --pink:#ff5fa2; --green:#5dff9b; --gold:#ffd84d; --purple:#b98bff; }
+  *{margin:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+  body{ background:linear-gradient(160deg,#1b1040,#160d2e 60%); color:var(--ink);
+        font-family:system-ui,-apple-system,"PingFang SC",sans-serif; min-height:100vh; padding:20px 16px 50px; }
+  .wrap{ max-width:520px; margin:0 auto; }
+  h1{ font-size:30px; text-align:center; margin-bottom:4px; }
+  .hi{ text-align:center; color:var(--dim); font-size:16px; margin-bottom:22px; }
+  .step{ background:var(--card); border:2px solid var(--stroke); border-radius:24px; padding:22px 18px; margin-bottom:20px; }
+  .step h2{ font-size:22px; margin-bottom:6px; display:flex; align-items:center; gap:8px; }
+  .step .tip{ color:var(--dim); font-size:15px; line-height:1.6; margin-bottom:14px; }
+  .big{ width:100%; font-family:inherit; font-weight:800; font-size:22px; cursor:pointer; border:none;
+        border-radius:18px; padding:18px; color:#1a0524; background:linear-gradient(90deg,var(--pink),var(--gold)); }
+  .big.cyan{ background:linear-gradient(90deg,var(--cyan),var(--purple)); color:#06121a; }
+  .big:active{ transform:scale(.98); }
+
+  /* 调音 */
+  #kNote{ font-size:96px; font-weight:900; text-align:center; line-height:1; color:var(--dim); }
+  #kNote.ok{ color:var(--green); }
+  #kArrow{ text-align:center; font-size:40px; height:48px; }
+  #kSay{ text-align:center; font-size:24px; font-weight:800; margin:6px 0 16px; min-height:30px; }
+
+  /* 和弦 */
+  .crow{ display:flex; gap:12px; justify-content:center; margin-bottom:14px; }
+  .crow button{ width:84px; height:84px; border-radius:20px; border:2px solid var(--stroke); background:#1d1338;
+        color:#fff; font-size:30px; font-weight:800; cursor:pointer; }
+  .crow button.on{ background:linear-gradient(135deg,var(--cyan),var(--purple)); border-color:transparent; color:#06121a; }
+  #kChordName{ text-align:center; font-size:40px; font-weight:900; margin:4px 0; }
+  #kSvg{ display:block; margin:0 auto; }
+
+  /* 跟弹 */
+  #kCur{ font-size:84px; font-weight:900; text-align:center; color:var(--cyan); line-height:1; }
+  #kNext{ text-align:center; color:var(--dim); font-size:20px; margin-top:4px; }
+  #kSong{ display:block; margin:10px auto; }
+  #kStar{ text-align:center; font-size:30px; min-height:40px; margin-top:10px; font-weight:800; color:var(--gold); }
+
+  .foot{ text-align:center; margin-top:18px; }
+  .foot a{ color:var(--dim); font-size:14px; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>🎸 小小吉他手</h1>
+  <div class="hi">跟着三步，今天就弹出第一段曲子！</div>
+
+  <!-- 第一步 调音 -->
+  <div class="step">
+    <h2>🎤 第一步：把吉他调准</h2>
+    <div class="tip">先调音，琴才好听！弹<b>一根弦</b>，看下面：</div>
+    <div id="kNote">–</div>
+    <div id="kArrow"></div>
+    <div id="kSay">点按钮开始 👇</div>
+    <button class="big" id="kTune">🎤 开始调音</button>
+    <div class="tip" style="margin-top:12px;margin-bottom:0">
+      🟢 变绿 = <b>对啦！</b>　👈 箭头朝左 = 太松，把弦钮<b>拧紧</b>一点　👉 朝右 = 太紧，<b>拧松</b>一点
+    </div>
+  </div>
+
+  <!-- 第二步 和弦 -->
+  <div class="step">
+    <h2>✋ 第二步：学按和弦</h2>
+    <div class="tip">点一个，听一听，照着<b>蓝点</b>用手指按。把吉他<b>立起来对着你</b>看，图就是你看到的样子！</div>
+    <div class="crow" id="kChords"></div>
+    <div id="kChordName">Em</div>
+    <svg id="kSvg" width="220" height="234"></svg>
+    <button class="big cyan" id="kReplay">🔊 再听一次</button>
+  </div>
+
+  <!-- 第三步 跟弹 -->
+  <div class="step">
+    <h2>🎵 第三步：跟我弹一首</h2>
+    <div class="tip">只用 <b>Em</b> 和 <b>G</b> 两个和弦来回换，就是一段曲子！看大字按，慢慢来。</div>
+    <div id="kCur">Em</div>
+    <div id="kNext">下一个：G</div>
+    <svg id="kSong" width="200" height="216"></svg>
+    <button class="big" id="kPlay">▶︎ 开始跟我弹</button>
+    <div id="kStar"></div>
+  </div>
+
+  <div class="foot"><a href="index.html">完整版（给大人 / 进阶）→</a></div>
+</div>
+
+<script>
+let ctx;
+function audio(){ if(!ctx) ctx=new (window.AudioContext||window.webkitAudioContext)(); if(ctx.state==='suspended') ctx.resume(); return ctx; }
+const NOTE=["C","C#","D","D#","E","F","F#","G","G#","A","A#","B"];
+const fM=m=>440*Math.pow(2,(m-69)/12), mF=f=>Math.round(12*Math.log2(f/440))+69;
+
+// 拨弦合成（Karplus-Strong）
+function ksPluck(freq,dur,when,gain){
+  const a=audio(),sr=a.sampleRate,N=Math.max(2,Math.round(sr/freq)),len=Math.floor(sr*dur);
+  const buf=a.createBuffer(1,len,sr),d=buf.getChannelData(0),ring=new Float32Array(N);
+  for(let i=0;i<N;i++) ring[i]=Math.random()*2-1;
+  let pos=0,last=0;const decay=0.996;
+  for(let i=0;i<len;i++){const cur=ring[pos],avg=0.5*(cur+last)*decay;d[i]=cur;ring[pos]=avg;last=cur;pos=(pos+1)%N;}
+  const fade=Math.min(len,Math.floor(sr*0.06));for(let i=0;i<fade;i++) d[len-1-i]*=i/fade;
+  const src=a.createBufferSource();src.buffer=buf;const g=a.createGain();g.gain.value=gain||0.5;
+  src.connect(g);g.connect(a.destination);src.start(when||a.currentTime);
+}
+const OPEN=[82.41,110,146.83,196,246.94,329.63];
+const CH={
+  Em:{frets:[0,2,2,0,0,0], fingers:['',2,3,'','','']},
+  Am:{frets:['x',0,2,2,1,0], fingers:['','',2,3,1,'']},
+  G:{frets:[3,2,0,0,0,3], fingers:[2,1,'','','',3]},
+  C:{frets:['x',3,2,0,1,0], fingers:['',3,2,'',1,'']},
+};
+function strum(name){ const a=audio();let t=a.currentTime+0.02;
+  CH[name].frets.forEach((f,i)=>{ if(f==='x')return; ksPluck(OPEN[i]*Math.pow(2,f/12),1.8,t,0.5); t+=0.04; }); }
+function drawChord(name,W,H){
+  W=W||220;H=H||234;const c=CH[name],PADX=28,PADY=44,GW=W-56,GH=150,sx=GW/5,sy=GH/4;
+  let s=`<svg viewBox="0 0 ${W} ${H}" width="${W}" height="${H}" xmlns="http://www.w3.org/2000/svg">`;
+  s+=`<text x="${W/2}" y="13" fill="#5dff9b" font-size="11" text-anchor="middle">↑ 琴头</text>`;
+  const sn=['E','A','D','G','B','e'];
+  c.frets.forEach((f,i)=>{ const x=PADX+i*sx; const m=f==='x'?'✕':(f===0?'○':'');
+    s+=`<text x="${x}" y="${PADY-15}" fill="${f==='x'?'#ff6b6b':'#b8a9e0'}" font-size="15" text-anchor="middle">${m}</text>`;
+    s+=`<text x="${x}" y="${PADY+GH+22}" fill="#b8a9e0" font-size="12" text-anchor="middle">${sn[i]}</text>`; });
+  s+=`<rect x="${PADX}" y="${PADY-3}" width="${GW}" height="5" fill="#fff" rx="2"/>`;
+  for(let r=1;r<=4;r++){const y=PADY+r*sy;s+=`<line x1="${PADX}" y1="${y}" x2="${PADX+GW}" y2="${y}" stroke="#5a4a8c" stroke-width="2"/>`;}
+  for(let i=0;i<6;i++){const x=PADX+i*sx;s+=`<line x1="${x}" y1="${PADY}" x2="${x}" y2="${PADY+GH}" stroke="#6a5aa0" stroke-width="2"/>`;}
+  c.frets.forEach((f,i)=>{ if(typeof f==='number'&&f>0){const x=PADX+i*sx,y=PADY+(f-0.5)*sy;
+    s+=`<circle cx="${x}" cy="${y}" r="13" fill="#3fe0ff"/>`;
+    if(c.fingers[i]) s+=`<text x="${x}" y="${y+5}" fill="#06121a" font-size="15" font-weight="800" text-anchor="middle">${c.fingers[i]}</text>`; }});
+  s+=`<text x="${W/2}" y="${PADY+GH+40}" fill="#3fe0ff" font-size="11" text-anchor="middle">左=粗　右=细</text>`;
+  return s+`</svg>`;
+}
+
+// ===== 第一步：调音（儿童语言）=====
+const KSTR=[{n:'E',m:40},{n:'A',m:45},{n:'D',m:50},{n:'G',m:55},{n:'B',m:59},{n:'E',m:64}];
+let analyser,kbuf,kTuning=false;
+const kNote=document.getElementById('kNote'),kArrow=document.getElementById('kArrow'),kSay=document.getElementById('kSay');
+function acf(buf,sr){let SIZE=buf.length,rms=0;for(let i=0;i<SIZE;i++)rms+=buf[i]*buf[i];rms=Math.sqrt(rms/SIZE);
+  if(rms<0.01)return -1;let r1=0,r2=SIZE-1,th=0.2;for(let i=0;i<SIZE/2;i++){if(Math.abs(buf[i])<th){r1=i;break;}}
+  for(let i=1;i<SIZE/2;i++){if(Math.abs(buf[SIZE-i])<th){r2=SIZE-i;break;}}
+  const b=buf.slice(r1,r2);SIZE=b.length;const c=new Array(SIZE).fill(0);
+  for(let i=0;i<SIZE;i++)for(let j=0;j<SIZE-i;j++)c[i]+=b[j]*b[j+i];
+  let d=0;while(c[d]>c[d+1])d++;let mv=-1,mp=-1;for(let i=d;i<SIZE;i++){if(c[i]>mv){mv=c[i];mp=i;}}
+  let T0=mp;const x1=c[T0-1]||0,x2=c[T0]||0,x3=c[T0+1]||0,a=(x1+x3-2*x2)/2,bb=(x3-x1)/2;if(a)T0=T0-bb/(2*a);return sr/T0;}
+document.getElementById('kTune').addEventListener('click',async function(){
+  if(kTuning){kTuning=false;this.textContent='🎤 开始调音';kSay.textContent='已暂停';return;}
+  try{ const st=await navigator.mediaDevices.getUserMedia({audio:{echoCancellation:false,noiseSuppression:false,autoGainControl:false}});
+    const a=audio();analyser=a.createAnalyser();analyser.fftSize=2048;a.createMediaStreamSource(st).connect(analyser);
+    kbuf=new Float32Array(analyser.fftSize);kTuning=true;this.textContent='⏸ 暂停';kSay.textContent='弹一根弦试试 🎸';kLoop();
+  }catch(e){ kSay.textContent='要允许用麦克风才行哦'; kSay.style.color='#ff6b6b'; }
+});
+function kLoop(){ if(!kTuning)return; analyser.getFloatTimeDomainData(kbuf);
+  const f=acf(kbuf,ctx.sampleRate);
+  if(f>0&&f<2000){ const midi=mF(f),cents=Math.floor(1200*Math.log2(f/fM(midi)));
+    kNote.textContent=NOTE[((midi%12)+12)%12];
+    if(Math.abs(cents)<=6){kNote.className='ok';kArrow.textContent='🟢';kSay.textContent='对啦！🎉';kSay.style.color='#5dff9b';}
+    else if(cents<0){kNote.className='';kArrow.textContent='👈';kSay.textContent='太松，拧紧一点';kSay.style.color='#ffd84d';}
+    else{kNote.className='';kArrow.textContent='👉';kSay.textContent='太紧，拧松一点';kSay.style.color='#ffd84d';}
+  }
+  requestAnimationFrame(kLoop);
+}
+
+// ===== 第二步：和弦 =====
+const KIDCH=['Em','Am','G','C'];
+const krow=document.getElementById('kChords');
+KIDCH.forEach((n,i)=>{ const b=document.createElement('button'); b.textContent=n; if(i===0)b.classList.add('on');
+  b.onclick=()=>{ krow.querySelectorAll('button').forEach(x=>x.classList.remove('on')); b.classList.add('on');
+    document.getElementById('kChordName').textContent=n;
+    document.getElementById('kSvg').outerHTML=drawChord(n,220,234).replace('<svg','<svg id="kSvg"'); strum(n); };
+  krow.appendChild(b); });
+document.getElementById('kSvg').outerHTML=drawChord('Em',220,234).replace('<svg','<svg id="kSvg"');
+document.getElementById('kReplay').onclick=()=>strum(document.getElementById('kChordName').textContent);
+
+// ===== 第三步：跟弹 Em ⇄ G =====
+const KPROG=['Em','G','Em','G'];
+let kRun=false,kIdx=0,kBeat=0,kTimer=null,kLoops=0;
+const kCur=document.getElementById('kCur'),kNext=document.getElementById('kNext'),kStar=document.getElementById('kStar');
+function kShow(){ kCur.textContent=KPROG[kIdx]; kNext.textContent='下一个：'+KPROG[(kIdx+1)%KPROG.length];
+  document.getElementById('kSong').outerHTML=drawChord(KPROG[kIdx],200,216).replace('<svg','<svg id="kSong"'); }
+function kStep(){ if(!kRun)return;
+  if(kBeat===0){ kShow(); strum(KPROG[kIdx]); }
+  kBeat++; if(kBeat>=4){ kBeat=0; kIdx++; if(kIdx>=KPROG.length){ kIdx=0; kLoops++;
+    kStar.textContent='🌟'.repeat(Math.min(kLoops,5))+' 弹完一遍啦！';
+    if(kLoops>=3){ kRun=false; kStar.textContent='🎉 太棒了！你弹了 3 遍，毕业咯！'; document.getElementById('kPlay').textContent='▶︎ 再来一次'; return; } } }
+  kTimer=setTimeout(kStep, 60000/48); // 48 BPM 慢速
+}
+document.getElementById('kPlay').addEventListener('click',function(){
+  if(kRun){ kRun=false; clearTimeout(kTimer); this.textContent='▶︎ 开始跟我弹'; return; }
+  audio(); kRun=true; kIdx=0; kBeat=0; kLoops=0; kStar.textContent=''; this.textContent='⏸ 停一下'; kStep();
+});
+kShow();
+
+if('serviceWorker' in navigator){ window.addEventListener('load',()=>navigator.serviceWorker.register('sw.js').catch(()=>{})); }
+</script>
+</body>
+</html>
