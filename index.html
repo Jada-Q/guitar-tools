@@ -15,9 +15,9 @@
   .tagline{ text-align:center; color:var(--dim); font-size:13px; margin-bottom:22px; }
 
   .tabs{ display:flex; gap:8px; margin-bottom:22px; }
-  .tabs{ gap:6px; }
-  .tab{ flex:1; text-align:center; cursor:pointer; font-weight:700; font-size:14px; padding:11px 4px;
-        border-radius:11px; border:1px solid var(--stroke); background:#161b29; color:var(--dim); transition:.15s; }
+  .tabs{ gap:5px; }
+  .tab{ flex:1; text-align:center; cursor:pointer; font-weight:700; font-size:13px; padding:10px 2px;
+        border-radius:10px; border:1px solid var(--stroke); background:#161b29; color:var(--dim); transition:.15s; }
   .tab.active{ background:linear-gradient(90deg,var(--cyan),#4f9dff); color:#04121f; border-color:transparent; }
 
   .panel{ display:none; }
@@ -93,6 +93,29 @@
   .rule .k{ color:var(--cyan); font-weight:700; }
   #tabSvg{ display:block; margin:16px auto 0; max-width:100%; }
   .tabcol-hl{ fill:var(--gold); }
+
+  /* ---- 练习 ---- */
+  .wk{ background:#161b29; border:1px solid var(--stroke); border-radius:12px; padding:14px 16px; margin-bottom:12px; }
+  .wk h3{ font-size:15px; color:var(--cyan); margin-bottom:10px; }
+  .chk{ display:flex; gap:10px; align-items:flex-start; font-size:14px; line-height:1.5; padding:6px 0; cursor:pointer; color:#c4ccdb; }
+  .chk input{ width:19px; height:19px; accent-color:var(--green); margin-top:1px; flex:0 0 auto; }
+  .chk.done span{ color:var(--dim); text-decoration:line-through; }
+  .pair{ display:flex; gap:10px; align-items:center; justify-content:center; margin:10px 0 18px; }
+  .pair select{ font-size:18px; font-weight:700; }
+  .pair .arrow{ color:var(--cyan); font-size:20px; }
+  #ccCount{ font-size:72px; font-weight:800; text-align:center; color:var(--cyan); line-height:1; }
+  #ccTime{ text-align:center; color:var(--dim); font-size:14px; margin:4px 0 14px; }
+  #ccBig{ width:100%; font-size:22px; padding:22px; border-radius:14px; border:none; cursor:pointer; font-weight:800;
+          background:linear-gradient(90deg,var(--green),#3fd089); color:#04121f; }
+  #ccBig:disabled{ opacity:.4; }
+  #ccBest{ text-align:center; color:var(--gold); font-size:14px; font-weight:700; margin-top:14px; min-height:20px; }
+  .play-now{ text-align:center; }
+  #paCur{ font-size:58px; font-weight:800; color:var(--cyan); line-height:1; }
+  #paNext{ color:var(--dim); font-size:15px; margin-top:6px; }
+  #paSvg{ display:block; margin:12px auto; }
+  #paBeat{ display:flex; justify-content:center; gap:8px; margin:8px 0 4px; }
+  #paBeat .pb{ width:14px; height:14px; border-radius:50%; background:#1b2234; border:1px solid var(--stroke); }
+  #paBeat .pb.on{ background:var(--gold); }
 </style>
 </head>
 <body>
@@ -106,6 +129,7 @@
     <div class="tab" data-p="metro">节拍</div>
     <div class="tab" data-p="parts">名称</div>
     <div class="tab" data-p="tabp">看谱</div>
+    <div class="tab" data-p="prac">练习</div>
   </div>
 
   <!-- ===== 调音器 ===== -->
@@ -253,6 +277,53 @@
       <svg id="tabSvg" width="520" height="180" viewBox="0 0 520 180" xmlns="http://www.w3.org/2000/svg"></svg>
       <button class="act replay" id="tabPlay">▶︎ 播放这段（一闪一闪亮晶晶）</button>
       <div class="note">最后一列 5 个数字叠在一起 = 一个 C 和弦（同时弹 5 根弦）。前面单个数字 = 旋律，一个一个弹。</div>
+    </div>
+  </div>
+
+  <!-- ===== 练习 ===== -->
+  <div class="panel" id="prac">
+    <div class="card">
+      <div class="subtab">
+        <button class="active" data-s="pPlan">计划</button>
+        <button data-s="pChange">换和弦</button>
+        <button data-s="pSong">跟弹</button>
+      </div>
+
+      <!-- 计划 -->
+      <div class="subpanel active" id="pPlan">
+        <div id="planBox"></div>
+        <div class="note">打勾会自动记住进度（存在你这台设备上）。每天 15-20 分钟，比周末练 2 小时有效得多。</div>
+      </div>
+
+      <!-- 换和弦计时器 -->
+      <div class="subpanel" id="pChange">
+        <div class="pair">
+          <select id="ccA"></select><span class="arrow">⇄</span><select id="ccB"></select>
+        </div>
+        <div id="ccCount">0</div>
+        <div id="ccTime">60 秒内，换好一次就点一下下面的按钮</div>
+        <button id="ccBig" disabled>先点「开始」</button>
+        <div style="text-align:center;margin-top:14px"><button class="act ghost" id="ccStart">▶︎ 开始 60 秒</button></div>
+        <div id="ccBest"></div>
+        <div class="note">这是初学最该练的「一分钟换和弦」：两个和弦来回换，换准一次点一下。机器听不出你换没换，所以靠你自己点（诚实）。每天破自己纪录就是进步。</div>
+      </div>
+
+      <!-- 跟弹练习曲 -->
+      <div class="subpanel" id="pSong">
+        <div class="play-now">
+          <div style="color:var(--dim);font-size:13px;margin-bottom:8px">练习曲：G → D → Em → C（卡农/万能进行，优雅又欢快）</div>
+          <div id="paCur">G</div>
+          <div id="paNext">下一个：D</div>
+          <svg id="paSvg" width="200" height="220"></svg>
+          <div id="paBeat"></div>
+        </div>
+        <div class="row">
+          <label>速度 <span id="paBpmV">50</span> BPM</label>
+        </div>
+        <input type="range" id="paBpm" min="40" max="100" value="50" />
+        <div style="text-align:center;margin-top:16px"><button class="act" id="paBtn">▶︎ 开始跟弹</button></div>
+        <div class="note">看大字当前和弦 + 下面指法图按好，「下一个」提前告诉你要换到哪——<b>提前准备下一个和弦</b>是换得快的关键。先 50 BPM 慢跟，顺了再拉速度。</div>
+      </div>
     </div>
   </div>
 </div>
@@ -528,6 +599,95 @@ document.getElementById('tabPlay').addEventListener('click',()=>{
     i++; setTimeout(next, stepMs);
   })();
 });
+
+// ============ ⑥ 练习 ============
+// 软节拍 tick
+function tick(){ const a=audio(); const o=a.createOscillator(),g=a.createGain(); o.frequency.value=1000;
+  o.connect(g); g.connect(a.destination); const t=a.currentTime;
+  g.gain.setValueAtTime(0.0001,t); g.gain.exponentialRampToValueAtTime(0.16,t+0.001);
+  g.gain.exponentialRampToValueAtTime(0.0001,t+0.03); o.start(t); o.stop(t+0.04); }
+
+// --- 计划（带 localStorage 进度）---
+const PLAN=[
+ {wk:'第 1 周 · 上手两个和弦', items:[
+   '每次练前先用「调音」tab 把琴调准',
+   '学按 Em（最简单，两根手指）',
+   '学按 G',
+   '去「换和弦」练 Em ⇄ G 一分钟',
+   '目标：每根弦都按响、不闷音']},
+ {wk:'第 2 周 · 加到四个和弦', items:[
+   '学按 C', '学按 D',
+   '练 C⇄G、G⇄D、D⇄Em 各一分钟',
+   '学基础扫弦：下 下 下 下 → 下 下 上']},
+ {wk:'第 3 周 · 弹第一首', items:[
+   '用「跟弹」练 G→D→Em→C 循环（先 50 BPM）',
+   '跟着这个进行哼唱一首你喜欢的欢快歌',
+   '慢慢把速度加到 70-80 BPM',
+   '能不停顿循环 4 圈 = 毕业 🎉']},
+];
+(function renderPlan(){
+  const box=document.getElementById('planBox'); let s='';
+  PLAN.forEach((w,wi)=>{ s+=`<div class="wk"><h3>${w.wk}</h3>`;
+    w.items.forEach((it,ii)=>{ const id='gtplan_'+wi+'_'+ii; const done=localStorage.getItem(id)==='1';
+      s+=`<label class="chk${done?' done':''}"><input type="checkbox" data-id="${id}" ${done?'checked':''}><span>${it}</span></label>`; });
+    s+=`</div>`; });
+  box.innerHTML=s;
+  box.querySelectorAll('input[type=checkbox]').forEach(cb=>cb.addEventListener('change',()=>{
+    localStorage.setItem(cb.dataset.id, cb.checked?'1':'0');
+    cb.closest('.chk').classList.toggle('done', cb.checked); }));
+})();
+
+// --- 换和弦计时器 ---
+const CHORD_NAMES=Object.keys(CHORDS);
+const ccA=document.getElementById('ccA'), ccB=document.getElementById('ccB');
+CHORD_NAMES.forEach(n=>{ ccA.add(new Option(n,n)); ccB.add(new Option(n,n)); });
+ccA.value='Em'; ccB.value='G';
+let ccRun=false, ccN=0, ccLeft=60, ccTimer=null;
+const ccCount=document.getElementById('ccCount'), ccTime=document.getElementById('ccTime'),
+      ccBig=document.getElementById('ccBig'), ccBest=document.getElementById('ccBest');
+const ccKey=()=> 'gtcc_'+[ccA.value,ccB.value].sort().join('-');
+function showBest(){ const b=localStorage.getItem(ccKey());
+  ccBest.textContent = b ? ('🏆 '+ccA.value+' ⇄ '+ccB.value+' 最高：'+b+' 次/分') : ''; }
+ccA.addEventListener('change',showBest); ccB.addEventListener('change',showBest); showBest();
+document.getElementById('ccStart').addEventListener('click',()=>{
+  if(ccRun) return; ccRun=true; ccN=0; ccLeft=60; audio();
+  ccCount.textContent='0'; ccBig.disabled=false; ccBig.textContent='换好了 +1 👆';
+  strum(ccA.value); setTimeout(()=>strum(ccB.value),500);
+  ccTimer=setInterval(()=>{ ccLeft--; ccTime.textContent='剩 '+ccLeft+' 秒'; tick();
+    if(ccLeft<=0){ clearInterval(ccTimer); ccRun=false; ccBig.disabled=true; ccBig.textContent='时间到！';
+      ccTime.textContent='结果：'+ccN+' 次/分钟';
+      const prev=+(localStorage.getItem(ccKey())||0);
+      if(ccN>prev){ localStorage.setItem(ccKey(),ccN); ccBest.textContent='🎉 新纪录 '+ccN+' 次！'; } else showBest();
+    } },1000);
+});
+ccBig.addEventListener('click',()=>{ if(ccRun){ ccN++; ccCount.textContent=ccN; } });
+
+// --- 跟弹练习曲 G→D→Em→C ---
+const PROG=['G','D','Em','C'];
+let paRun=false, paIdx=0, paBeat=0, paTimer=null, paBpm=50;
+const paCur=document.getElementById('paCur'), paNext=document.getElementById('paNext'), paBpmV=document.getElementById('paBpmV');
+const paBeatBox=document.getElementById('paBeat');
+for(let i=0;i<4;i++){ const d=document.createElement('div'); d.className='pb'; d.id='pb'+i; paBeatBox.appendChild(d); }
+document.getElementById('paBpm').addEventListener('input',e=>{ paBpm=+e.target.value; paBpmV.textContent=paBpm; });
+function paShow(){
+  paCur.textContent=PROG[paIdx];
+  paNext.textContent='下一个：'+PROG[(paIdx+1)%PROG.length];
+  document.getElementById('paSvg').outerHTML = drawChord(PROG[paIdx]).replace('<svg','<svg id="paSvg" width="200" height="216"');
+}
+function paStep(){
+  if(!paRun) return;
+  document.querySelectorAll('#paBeat .pb').forEach(d=>d.classList.remove('on'));
+  const dot=document.getElementById('pb'+paBeat); if(dot) dot.classList.add('on');
+  if(paBeat===0){ paShow(); strum(PROG[paIdx]); } else { tick(); }
+  paBeat++; if(paBeat>=4){ paBeat=0; paIdx=(paIdx+1)%PROG.length; }
+  paTimer=setTimeout(paStep, 60000/paBpm);
+}
+document.getElementById('paBtn').addEventListener('click',function(){
+  if(paRun){ paRun=false; clearTimeout(paTimer); this.textContent='▶︎ 开始跟弹';
+    document.querySelectorAll('#paBeat .pb').forEach(d=>d.classList.remove('on')); return; }
+  audio(); paRun=true; paIdx=0; paBeat=0; this.textContent='⏸ 停止'; paStep();
+});
+paShow();
 </script>
 </body>
 </html>
